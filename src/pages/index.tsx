@@ -122,6 +122,60 @@ interface DataType {
   };
 }
 
+function getDataSource() {
+  const currentDate = dayjs();
+  const currentMonth = currentDate.month();
+  const currentYear = currentDate.year();
+  const endMonth = currentMonth + 2 > 11 ? (currentMonth + 2) % 12 : currentMonth + 2;
+  const endDate = dayjs(`${currentYear}-${endMonth + 1}-01`).endOf('month').date();
+
+  let dataSource: DataType[] = [];
+  for (let i = currentMonth; i <= endMonth; i++) {
+      const month = i % 12;
+      const daysInMonth = dayjs(`${currentYear}-${month + 1}-01`).daysInMonth();
+      const startDay = i === currentMonth ? 1 : 1;
+      const endDay = i === endMonth ? endDate : daysInMonth;
+
+      for (let j = startDay; j <= endDay; j++) {
+          const date = dayjs(`${currentYear}-${month + 1}-${j}`);
+          const formattedDate = date.format('DD MMM (ddd)');
+          console.log(formattedDate);
+          dataSource.push({
+              key: date.format('YYYY-MM-DD'),
+              title: `Card Title ${j}`,
+              content: `This is the content of the card for ${formattedDate}`,
+              date: formattedDate,
+              boardMeetings: {
+                  title: `Board Meeting ${j}`,
+                  description: 'This is the description',
+                  date: formattedDate,
+                  time: '10:00 AM',
+                  info: 'Info',
+                  pid: 'PID',
+                  boardDoc: 'Board Doc',
+              },
+              noObjectionDeadlines: {
+                  title: `No Objection Deadline ${j}`,
+                  description: 'This is the description',
+                  date: formattedDate,
+                  time: '10:00 AM',
+                  info: 'Info',
+                  pid: 'PID',
+                  boardDoc: 'Board Doc',
+              },
+              otherActivities: {
+                  title: `Other Activity ${j}`,
+                  description: 'This is the description',
+                  date: formattedDate,
+                  time: '10:00 AM',
+                  info: 'Info',
+              },
+          });
+      }
+  }
+  return dataSource
+}
+
 const dataSource: DataType[] = [
   {
     key: "1",
@@ -310,7 +364,7 @@ const tabs = [
     children: (
       <Table
         columns={columns}
-        dataSource={dataSource}
+        dataSource={getDataSource()}
         showSorterTooltip={true}
       />
     ),
