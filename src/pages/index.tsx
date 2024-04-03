@@ -209,7 +209,7 @@ const columns: TableProps<DataType>["columns"] = [
     key: "boardMeetingCard",
     render: (record: any) => (
       <Card
-        style={{ width: 300 }}
+        style={{ width: 269 }}
         actions={[
           <EditOutlined key="edit" />,
           <DoubleRightOutlined key="next" />,
@@ -231,7 +231,7 @@ const columns: TableProps<DataType>["columns"] = [
     key: "noObjectionCard",
     render: (record: any) => (
       <Card
-        style={{ width: 300 }}
+        style={{ width: 269 }}
         actions={[
           <EditOutlined key="edit" />,
           <DoubleLeftOutlined key="prev" />,
@@ -253,7 +253,7 @@ const columns: TableProps<DataType>["columns"] = [
     key: "otherActivitiesCard",
     render: (record: any) => (
       <Card
-        style={{ width: 300 }}
+        style={{ width: 269 }}
         actions={[
           <EditOutlined key="edit" />,
           <EllipsisOutlined key="ellipsis" />,
