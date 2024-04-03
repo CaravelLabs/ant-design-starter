@@ -110,8 +110,66 @@ const generateDataSource = () => {
 };
 // ------------------------------
 
+// Code for Add Event Menu
+const addEventItems: MenuProps["items"] = [
+  {
+    key: "1",
+    label: "Board Meetings",
+  },
+  {
+    key: "2",
+    label: "No Objection Deadlines",
+  },
+  {
+    key: "3",
+    label: "Other Activities",
+  },
+];
+
+const handleMenuClick: MenuProps["onClick"] = (e) => {
+  console.log(e);
+};
+
+const menuProps: MenuProps = {
+  items: addEventItems,
+  onClick: handleMenuClick,
+};
+// ------------------------------
+
+interface DataType {
+  key: string;
+  title: string;
+  content: string;
+  date: string;
+  boardMeetings: {
+    title: string;
+    description: string;
+    date: string;
+    time: string;
+    info: string;
+    pid: string;
+    boardDoc: string;
+  };
+  noObjectionDeadlines: {
+    title: string;
+    description: string;
+    date: string;
+    time: string;
+    info: string;
+    pid: string;
+    boardDoc: string;
+  };
+  otherActivities: {
+    title: string;
+    description: string;
+    date: string;
+    time: string;
+    info: string;
+  };
+}
+
 // Code for Data Source for Table
-const dataSource = [
+const dataSource: DataType[] = [
   {
     key: "1",
     title: "Card Title 1",
@@ -146,41 +204,15 @@ const dataSource = [
 ];
 // ------------------------------
 
-// Code for Add Event Menu
-const addEventItems: MenuProps["items"] = [
-  {
-    key: "1",
-    label: "Board Meetings",
-  },
-  {
-    key: "2",
-    label: "No Objection Deadlines",
-  },
-  {
-    key: "3",
-    label: "Other Activities",
-  },
-];
-
-const handleMenuClick: MenuProps["onClick"] = (e) => {
-  console.log(e);
-};
-
-const menuProps: MenuProps = {
-  items: addEventItems,
-  onClick: handleMenuClick,
-};
-// ------------------------------
-
 // Code for Table Columns
-const columns = [
+const columns: TableProps<DataType>['columns'] = [
   {
-    title: "Date",
-    dataIndex: "date",
-    key: "date",
-    render: (date: string) => (
+    title: 'Date',
+    dataIndex: 'date',
+    key: 'date',
+    render: (record: string) => (
       <Space direction="vertical" size="middle">
-        <a>{date}</a>
+        <a>{record}</a>
         <Dropdown menu={menuProps}>
           <Button>
             <Space>
@@ -193,9 +225,9 @@ const columns = [
     ),
   },
   {
-    title: "Board Meetings",
-    dataIndex: "boardMeetings",
-    key: "boardMeetingCard",
+    title: 'Board Meetings',
+    dataIndex: 'boardMeetings',
+    key: 'boardMeetingCard',
     render: (record: any) => (
       <Card
         style={{ width: 300 }}
@@ -215,9 +247,9 @@ const columns = [
     ),
   },
   {
-    title: "No-Objection Deadlines",
-    dataIndex: "noObjectionDeadlines",
-    key: "noObjectionCard",
+    title: 'No-Objection Deadlines',
+    dataIndex: 'noObjectionDeadlines',
+    key: 'noObjectionCard',
     render: (record: any) => (
       <Card
         style={{ width: 300 }}
@@ -237,9 +269,9 @@ const columns = [
     ),
   },
   {
-    title: "Other Activities",
-    dataIndex: "otherActivities",
-    key: "otherActivitiesCard",
+    title: 'Other Activities',
+    dataIndex: 'otherActivities',
+    key: 'otherActivitiesCard',
     render: (record: any) => (
       <Card
         style={{ width: 300 }}
