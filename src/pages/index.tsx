@@ -16,6 +16,7 @@ import {
   Col,
   Row,
 } from "antd";
+import { Calendar } from "antd";
 import {
   EditOutlined,
   EllipsisOutlined,
@@ -23,6 +24,7 @@ import {
   DoubleRightOutlined,
   DoubleLeftOutlined,
 } from "@ant-design/icons";
+import CustomCalendar from "./custom-calendar";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -34,24 +36,24 @@ const items1: MenuProps["items"] = ["1", "2", "3"].map((key) => ({
 const { Meta } = Card;
 
 const gridStyleFull: React.CSSProperties = {
-  width: '100%',
-  textAlign: 'center',
+  width: "100%",
+  textAlign: "center",
 };
 
 const gridStyleHalf: React.CSSProperties = {
-  width: '50%',
-  textAlign: 'center',
-}
+  width: "50%",
+  textAlign: "center",
+};
 
 const gridStyleThirds: React.CSSProperties = {
-  width: '33.333%',
-  textAlign: 'center',
-}
+  width: "33.333%",
+  textAlign: "center",
+};
 
 const gridStyleQuarter: React.CSSProperties = {
-  width: '25%',
-  textAlign: 'center',
-}
+  width: "25%",
+  textAlign: "center",
+};
 
 const items2: MenuProps["items"] = [
   UserOutlined,
@@ -64,7 +66,6 @@ const items2: MenuProps["items"] = [
     key: `sub${key}`,
     icon: React.createElement(icon),
     label: `subnav ${key}`,
-
     children: new Array(4).fill(null).map((_, j) => {
       const subKey = index * 4 + j + 1;
       return {
@@ -74,6 +75,10 @@ const items2: MenuProps["items"] = [
     }),
   };
 });
+
+const handleDateSelect = (date: Date): void => {
+  console.log("Selected date:", date);
+};
 
 const dataSource = [
   {
@@ -105,10 +110,7 @@ const columns = [
         ]}
       >
         <Card.Grid style={gridStyleFull}>
-          <Meta
-            title="Event Title"
-            description="This is the description"
-          />
+          <Meta title="Event Title" description="This is the description" />
         </Card.Grid>
         {/* <Card.Grid style={gridStyleHalf}>Date</Card.Grid>
         <Card.Grid style={gridStyleHalf}>Time</Card.Grid> */}
@@ -132,10 +134,7 @@ const columns = [
         ]}
       >
         <Card.Grid style={gridStyleFull}>
-          <Meta
-            title="Event Title"
-            description="This is the description"
-          />
+          <Meta title="Event Title" description="This is the description" />
         </Card.Grid>
         {/* <Card.Grid style={gridStyleHalf}>Date</Card.Grid>
         <Card.Grid style={gridStyleHalf}>Time</Card.Grid> */}
@@ -158,10 +157,7 @@ const columns = [
         ]}
       >
         <Card.Grid style={gridStyleFull}>
-          <Meta
-            title="Event Title"
-            description="This is the description"
-          />
+          <Meta title="Event Title" description="This is the description" />
         </Card.Grid>
         {/* <Card.Grid style={gridStyleHalf}>Date</Card.Grid>
         <Card.Grid style={gridStyleHalf}>Time</Card.Grid> */}
@@ -201,16 +197,46 @@ const App: React.FC = () => {
             borderRadius: borderRadiusLG,
           }}
         >
-          <Sider style={{ background: colorBgContainer }} width={200}>
-            <Menu
+          <Sider style={{ background: colorBgContainer }} width={400}>
+            {/* <Menu
               mode="inline"
               defaultSelectedKeys={["1"]}
               defaultOpenKeys={["sub1"]}
               style={{ height: "100%" }}
               items={items2}
-            />
+            /> */}
+            <div
+              style={{
+                maxWidth: "75%",
+                border: "1px solid #d9d9d9",
+                borderRadius: 4,
+              }}
+            >
+              <div
+                style={{
+                  padding: "8px",
+                }}
+              >
+                <CustomCalendar onSelectDate={handleDateSelect} />
+              </div>
+              <div
+                style={{
+                  padding: "8px",
+                }}
+              >
+                <CustomCalendar onSelectDate={handleDateSelect} />
+              </div>
+              <div
+                style={{
+                  padding: "8px",
+                }}
+              >
+                <CustomCalendar onSelectDate={handleDateSelect} />
+              </div>
+              {/* <Calendar fullscreen={false} /> */}
+            </div>
           </Sider>
-          <Content style={{ padding: "0 24px", minHeight: 280 }}>
+          <Content style={{ padding: "0 20px", minHeight: 280 }}>
             <Table
               columns={columns}
               dataSource={dataSource}
