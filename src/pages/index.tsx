@@ -22,6 +22,8 @@ import {
   Divider,
   Tabs,
 } from "antd";
+import { observer } from "mobx-react-lite";
+import { Calendar } from "antd";
 import {
   EditOutlined,
   EllipsisOutlined,
@@ -31,6 +33,7 @@ import {
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import CustomCalendar from "./custom-calendar";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -61,7 +64,6 @@ const gridStyleQuarter: React.CSSProperties = {
   width: "25%",
   textAlign: "center",
 };
-// ------------------------------
 
 const items2: MenuProps["items"] = [
   UserOutlined,
@@ -74,7 +76,6 @@ const items2: MenuProps["items"] = [
     key: `sub${key}`,
     icon: React.createElement(icon),
     label: `subnav ${key}`,
-
     children: new Array(4).fill(null).map((_, j) => {
       const subKey = index * 4 + j + 1;
       return {
@@ -85,91 +86,11 @@ const items2: MenuProps["items"] = [
   };
 });
 
-// Code for Dynamically Rendering 3 Months of Data
-const generateDataSource = () => {
-  const startDate = dayjs().startOf("month");
-  const endDate = dayjs().add(3, "month");
-
-  const dataSource = [];
-  dayjs.extend(isSameOrBefore);
-  for (
-    let currentDate = startDate;
-    currentDate.isSameOrBefore(endDate);
-    currentDate = currentDate.add(1, "day")
-  ) {
-    const formattedDate = currentDate.format("DD-MMM (ddd)");
-    dataSource.push({
-      key: currentDate.format("YYYY-MM-DD"),
-      title: `Card Title ${formattedDate}`,
-      content: `This is the content for ${formattedDate}.`,
-      date: formattedDate,
-    });
-  }
-
-  return dataSource;
-};
-// ------------------------------
-
-// Code for Add Event Menu
-const addEventItems: MenuProps["items"] = [
-  {
-    key: "1",
-    label: "Board Meetings",
-  },
-  {
-    key: "2",
-    label: "No Objection Deadlines",
-  },
-  {
-    key: "3",
-    label: "Other Activities",
-  },
-];
-
-const handleMenuClick: MenuProps["onClick"] = (e) => {
-  console.log(e);
+const handleDateSelect = (date: Date): void => {
+  console.log("Selected date:", date);
 };
 
-const menuProps: MenuProps = {
-  items: addEventItems,
-  onClick: handleMenuClick,
-};
-// ------------------------------
-
-interface DataType {
-  key: string;
-  title: string;
-  content: string;
-  date: string;
-  boardMeetings: {
-    title: string;
-    description: string;
-    date: string;
-    time: string;
-    info: string;
-    pid: string;
-    boardDoc: string;
-  };
-  noObjectionDeadlines: {
-    title: string;
-    description: string;
-    date: string;
-    time: string;
-    info: string;
-    pid: string;
-    boardDoc: string;
-  };
-  otherActivities: {
-    title: string;
-    description: string;
-    date: string;
-    time: string;
-    info: string;
-  };
-}
-
-// Code for Data Source for Table
-const dataSource: DataType[] = [
+const dataSource = [
   {
     key: "1",
     title: "Card Title 1",
@@ -204,15 +125,41 @@ const dataSource: DataType[] = [
 ];
 // ------------------------------
 
-// Code for Table Columns
-const columns: TableProps<DataType>['columns'] = [
+// Code for Add Event Menu
+const addEventItems: MenuProps["items"] = [
   {
-    title: 'Date',
-    dataIndex: 'date',
-    key: 'date',
-    render: (record: string) => (
+    key: "1",
+    label: "Board Meetings",
+  },
+  {
+    key: "2",
+    label: "No Objection Deadlines",
+  },
+  {
+    key: "3",
+    label: "Other Activities",
+  },
+];
+
+const handleMenuClick: MenuProps["onClick"] = (e) => {
+  console.log(e);
+};
+
+const menuProps: MenuProps = {
+  items: addEventItems,
+  onClick: handleMenuClick,
+};
+// ------------------------------
+
+// Code for Table Columns
+const columns = [
+  {
+    title: "Date",
+    dataIndex: "date",
+    key: "date",
+    render: (date: string) => (
       <Space direction="vertical" size="middle">
-        <a>{record}</a>
+        <a>{date}</a>
         <Dropdown menu={menuProps}>
           <Button>
             <Space>
@@ -225,9 +172,9 @@ const columns: TableProps<DataType>['columns'] = [
     ),
   },
   {
-    title: 'Board Meetings',
-    dataIndex: 'boardMeetings',
-    key: 'boardMeetingCard',
+    title: "Board Meetings",
+    dataIndex: "boardMeetings",
+    key: "boardMeetingCard",
     render: (record: any) => (
       <Card
         style={{ width: 300 }}
@@ -238,6 +185,7 @@ const columns: TableProps<DataType>['columns'] = [
         ]}
       >
         <Card.Grid style={gridStyleFull}>
+          <Meta title="Event Title" description="This is the description" />
           <Meta title={record?.title} description={record.description} />
         </Card.Grid>
         <Card.Grid style={gridStyleThirds}>{record.info}</Card.Grid>
@@ -247,9 +195,9 @@ const columns: TableProps<DataType>['columns'] = [
     ),
   },
   {
-    title: 'No-Objection Deadlines',
-    dataIndex: 'noObjectionDeadlines',
-    key: 'noObjectionCard',
+    title: "No-Objection Deadlines",
+    dataIndex: "noObjectionDeadlines",
+    key: "noObjectionCard",
     render: (record: any) => (
       <Card
         style={{ width: 300 }}
@@ -260,6 +208,7 @@ const columns: TableProps<DataType>['columns'] = [
         ]}
       >
         <Card.Grid style={gridStyleFull}>
+          <Meta title="Event Title" description="This is the description" />
           <Meta title={record.title} description={record.description} />
         </Card.Grid>
         <Card.Grid style={gridStyleThirds}>{record.info}</Card.Grid>
@@ -269,9 +218,9 @@ const columns: TableProps<DataType>['columns'] = [
     ),
   },
   {
-    title: 'Other Activities',
-    dataIndex: 'otherActivities',
-    key: 'otherActivitiesCard',
+    title: "Other Activities",
+    dataIndex: "otherActivities",
+    key: "otherActivitiesCard",
     render: (record: any) => (
       <Card
         style={{ width: 300 }}
@@ -281,6 +230,7 @@ const columns: TableProps<DataType>['columns'] = [
         ]}
       >
         <Card.Grid style={gridStyleFull}>
+          <Meta title="Event Title" description="This is the description" />
           <Meta title={record.title} description={record.description} />
         </Card.Grid>
         <Card.Grid style={gridStyleFull}>{record.info}</Card.Grid>
@@ -313,11 +263,15 @@ const operations = (
   <>
     <Dropdown menu={exportMenuProps}>
       <Button>
-        Export <DownOutlined />
+        3-Month <DownOutlined />
       </Button>
     </Dropdown>
   </>
 );
+// ------------------------------
+
+// Code for Tabs and Export Menu
+
 // ------------------------------
 
 const tabs = [
@@ -347,7 +301,55 @@ const App: React.FC = () => {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+  const [calendarNumber, setCalendarNumber] = useState(3);
+  const handleMenuClick = (e: { key: string; }) => {
+    setCalendarNumber(parseInt(e.key)); // Parse e.key to integer if necessary
+  };
+  const calendarSelectItems: MenuProps["items"] = [
+    {
+      key: "3",
+      label: "3-Month",
+    },
+    {
+      key: "12",
+      label: "12-Month",
+    },
+  ];
 
+  const calendarProps: MenuProps = {
+    items: calendarSelectItems,
+    onClick: handleMenuClick,
+  };
+  const calendars = Array.from({ length: calendarNumber }).map((_, index) => (
+    <div key={index} style={{ padding: "8px" }}>
+      <CustomCalendar
+        onSelectDate={handleDateSelect}
+        month={
+          new Date().getMonth() + 1 + index > 12
+            ? (new Date().getMonth() + 1 + index) % 12
+            : new Date().getMonth() + 1 + index
+        }
+        year={
+          new Date().getMonth() + 1 + index > 12
+            ? new Date().getFullYear() + 1
+            : new Date().getFullYear()
+        }
+      />
+    </div>
+  ));
+
+  const calendarOperation = (
+    <>
+      <div style={{ paddingTop: "10px" }}>
+        <Dropdown menu={calendarProps}>
+          <Button>
+            {calendarNumber === 3 ? "3-Month" : "12-Month"}
+            <DownOutlined />
+          </Button>
+        </Dropdown>
+      </div>
+    </>
+  );
   return (
     <Layout>
       <Header style={{ display: "flex", alignItems: "center" }}>
@@ -373,14 +375,19 @@ const App: React.FC = () => {
             borderRadius: borderRadiusLG,
           }}
         >
-          <Sider style={{ background: colorBgContainer }} width={200}>
-            <Menu
-              mode="inline"
-              defaultSelectedKeys={["1"]}
-              defaultOpenKeys={["sub1"]}
-              style={{ height: "100%" }}
-              items={items2}
-            />
+          <Sider style={{ background: colorBgContainer }} width={400}>
+            <div
+              style={{
+                maxWidth: "75%",
+                border: "1px solid #d9d9d9",
+                borderRadius: 4,
+              }}
+            >
+              <Content style={{ padding: "0 24px" }}>
+                <Tabs tabBarExtraContent={calendarOperation} />
+              </Content>
+              {calendars}
+            </div>
           </Sider>
           <Content style={{ padding: "0 24px" }}>
             <Tabs tabBarExtraContent={operations} items={tabs} />
@@ -394,4 +401,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default observer(App);
