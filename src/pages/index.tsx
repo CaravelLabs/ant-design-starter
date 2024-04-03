@@ -90,7 +90,39 @@ const handleDateSelect = (date: Date): void => {
   console.log("Selected date:", date);
 };
 
-const dataSource = [
+interface DataType {
+  key: string;
+  title: string;
+  content: string;
+  date: string;
+  boardMeetings: {
+    title: string;
+    description: string;
+    date: string;
+    time: string;
+    info: string;
+    pid: string;
+    boardDoc: string;
+  };
+  noObjectionDeadlines: {
+    title: string;
+    description: string;
+    date: string;
+    time: string;
+    info: string;
+    pid: string;
+    boardDoc: string;
+  };
+  otherActivities: {
+    title: string;
+    description: string;
+    date: string;
+    time: string;
+    info: string;
+  };
+}
+
+const dataSource: DataType[] = [
   {
     key: "1",
     title: "Card Title 1",
@@ -152,7 +184,7 @@ const menuProps: MenuProps = {
 // ------------------------------
 
 // Code for Table Columns
-const columns = [
+const columns: TableProps<DataType>["columns"] = [
   {
     title: "Date",
     dataIndex: "date",
@@ -185,7 +217,6 @@ const columns = [
         ]}
       >
         <Card.Grid style={gridStyleFull}>
-          <Meta title="Event Title" description="This is the description" />
           <Meta title={record?.title} description={record.description} />
         </Card.Grid>
         <Card.Grid style={gridStyleThirds}>{record.info}</Card.Grid>
@@ -208,7 +239,6 @@ const columns = [
         ]}
       >
         <Card.Grid style={gridStyleFull}>
-          <Meta title="Event Title" description="This is the description" />
           <Meta title={record.title} description={record.description} />
         </Card.Grid>
         <Card.Grid style={gridStyleThirds}>{record.info}</Card.Grid>
@@ -230,7 +260,6 @@ const columns = [
         ]}
       >
         <Card.Grid style={gridStyleFull}>
-          <Meta title="Event Title" description="This is the description" />
           <Meta title={record.title} description={record.description} />
         </Card.Grid>
         <Card.Grid style={gridStyleFull}>{record.info}</Card.Grid>
@@ -263,7 +292,7 @@ const operations = (
   <>
     <Dropdown menu={exportMenuProps}>
       <Button>
-        3-Month <DownOutlined />
+        Export <DownOutlined />
       </Button>
     </Dropdown>
   </>
@@ -302,7 +331,7 @@ const App: React.FC = () => {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
   const [calendarNumber, setCalendarNumber] = useState(3);
-  const handleMenuClick = (e: { key: string; }) => {
+  const handleMenuClick = (e: { key: string }) => {
     setCalendarNumber(parseInt(e.key)); // Parse e.key to integer if necessary
   };
   const calendarSelectItems: MenuProps["items"] = [
@@ -337,19 +366,6 @@ const App: React.FC = () => {
       />
     </div>
   ));
-
-  const calendarOperation = (
-    <>
-      <div style={{ paddingTop: "10px" }}>
-        <Dropdown menu={calendarProps}>
-          <Button>
-            {calendarNumber === 3 ? "3-Month" : "12-Month"}
-            <DownOutlined />
-          </Button>
-        </Dropdown>
-      </div>
-    </>
-  );
   return (
     <Layout>
       <Header style={{ display: "flex", alignItems: "center" }}>
@@ -362,12 +378,12 @@ const App: React.FC = () => {
           style={{ flex: 1, minWidth: 0 }}
         />
       </Header>
-      <Content style={{ padding: "0 48px" }}>
-        <Breadcrumb style={{ margin: "16px 0" }}>
+      <Content>
+        {/* <Breadcrumb style={{ margin: "16px 0" }}>
           <Breadcrumb.Item>Home</Breadcrumb.Item>
           <Breadcrumb.Item>List</Breadcrumb.Item>
           <Breadcrumb.Item>App</Breadcrumb.Item>
-        </Breadcrumb>
+        </Breadcrumb> */}
         <Layout
           style={{
             padding: "24px 0",
@@ -375,19 +391,16 @@ const App: React.FC = () => {
             borderRadius: borderRadiusLG,
           }}
         >
-          <Sider style={{ background: colorBgContainer }} width={400}>
-            <div
-              style={{
-                maxWidth: "75%",
-                border: "1px solid #d9d9d9",
-                borderRadius: 4,
-              }}
-            >
-              <Content style={{ padding: "0 24px" }}>
-                <Tabs tabBarExtraContent={calendarOperation} />
-              </Content>
-              {calendars}
-            </div>
+          <Sider style={{ background: colorBgContainer }} width="auto">
+            <Content style={{ padding: "8px" }}>
+              <Dropdown menu={calendarProps}>
+                <Button>
+                  {calendarNumber === 3 ? "3-Month" : "12-Month"}
+                  <DownOutlined />
+                </Button>
+              </Dropdown>
+            </Content>
+            {calendars}
           </Sider>
           <Content style={{ padding: "0 24px" }}>
             <Tabs tabBarExtraContent={operations} items={tabs} />

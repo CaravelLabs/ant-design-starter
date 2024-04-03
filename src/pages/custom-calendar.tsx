@@ -55,7 +55,7 @@ const CustomCalendar: React.FC<CalendarProps> = ({ onSelectDate, month, year }) 
         key={index}
         className={`calendar-day ${day === null ? "empty" : ""}`}
         onClick={() => handleDayClick(day)}
-        style={{ cursor: day === null ? "default" : "pointer" }}
+        style={{ cursor: day === null ? "default" : "pointer", textAlign: "center"}}
       >
         {day}
       </div>
@@ -76,7 +76,7 @@ const CustomCalendar: React.FC<CalendarProps> = ({ onSelectDate, month, year }) 
         borderRadius: "2px",
         border: "1px solid #d9d9d9",
         boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
-        width: "280px",
+        width: "270px",
       }}
     >
       <div
@@ -112,7 +112,7 @@ const CustomCalendar: React.FC<CalendarProps> = ({ onSelectDate, month, year }) 
                       >
                         <span
                           className="ant-calendar-column-header-inner"
-                          style={{ fontWeight: "500" }}
+                          style={{ fontWeight: "500", textAlign: "center" }}
                         >
                           {day}
                         </span>
