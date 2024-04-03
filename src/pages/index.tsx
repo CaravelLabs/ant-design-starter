@@ -22,6 +22,7 @@ import {
   Divider,
   Tabs,
 } from "antd";
+import { observer } from "mobx-react-lite";
 import { Calendar } from "antd";
 import {
   EditOutlined,
@@ -262,11 +263,15 @@ const operations = (
   <>
     <Dropdown menu={exportMenuProps}>
       <Button>
-        Export <DownOutlined />
+        3-Month <DownOutlined />
       </Button>
     </Dropdown>
   </>
 );
+// ------------------------------
+
+// Code for Tabs and Export Menu
+
 // ------------------------------
 
 const tabs = [
@@ -296,7 +301,55 @@ const App: React.FC = () => {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+  const [calendarNumber, setCalendarNumber] = useState(3);
+  const handleMenuClick = (e: { key: React.SetStateAction<number> }) => {
+    setCalendarNumber(e.key);
+  };
+  const calendarSelectItems: MenuProps["items"] = [
+    {
+      key: "3",
+      label: "3-Month",
+    },
+    {
+      key: "12",
+      label: "12-Month",
+    },
+  ];
 
+  const calendarProps: MenuProps = {
+    items: calendarSelectItems,
+    onClick: handleMenuClick,
+  };
+  const calendars = Array.from({ length: calendarNumber }).map((_, index) => (
+    <div key={index} style={{ padding: "8px" }}>
+      <CustomCalendar
+        onSelectDate={handleDateSelect}
+        month={
+          new Date().getMonth() + 1 + index > 12
+            ? (new Date().getMonth() + 1 + index) % 12
+            : new Date().getMonth() + 1 + index
+        }
+        year={
+          new Date().getMonth() + 1 + index > 12
+            ? new Date().getFullYear() + 1
+            : new Date().getFullYear()
+        }
+      />
+    </div>
+  ));
+
+  const calendarOperation = (
+    <>
+      <div style={{ paddingTop: "10px" }}>
+        <Dropdown menu={calendarProps}>
+          <Button>
+            {calendarNumber === 3 ? "3-Month" : "12-Month"}
+            <DownOutlined />
+          </Button>
+        </Dropdown>
+      </div>
+    </>
+  );
   return (
     <Layout>
       <Header style={{ display: "flex", alignItems: "center" }}>
@@ -323,13 +376,6 @@ const App: React.FC = () => {
           }}
         >
           <Sider style={{ background: colorBgContainer }} width={400}>
-            {/* <Menu
-              mode="inline"
-              defaultSelectedKeys={["1"]}
-              defaultOpenKeys={["sub1"]}
-              style={{ height: "100%" }}
-              items={items2}
-            /> */}
             <div
               style={{
                 maxWidth: "75%",
@@ -337,28 +383,10 @@ const App: React.FC = () => {
                 borderRadius: 4,
               }}
             >
-              <div
-                style={{
-                  padding: "8px",
-                }}
-              >
-                <CustomCalendar onSelectDate={handleDateSelect} />
-              </div>
-              <div
-                style={{
-                  padding: "8px",
-                }}
-              >
-                <CustomCalendar onSelectDate={handleDateSelect} />
-              </div>
-              <div
-                style={{
-                  padding: "8px",
-                }}
-              >
-                <CustomCalendar onSelectDate={handleDateSelect} />
-              </div>
-              {/* <Calendar fullscreen={false} /> */}
+              <Content style={{ padding: "0 24px" }}>
+                <Tabs tabBarExtraContent={calendarOperation} />
+              </Content>
+              {calendars}
             </div>
           </Sider>
           <Content style={{ padding: "0 24px" }}>
@@ -373,4 +401,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default observer(App);
