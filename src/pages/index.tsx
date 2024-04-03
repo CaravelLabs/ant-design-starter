@@ -302,8 +302,8 @@ const App: React.FC = () => {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
   const [calendarNumber, setCalendarNumber] = useState(3);
-  const handleMenuClick = (e: { key: React.SetStateAction<number> }) => {
-    setCalendarNumber(e.key);
+  const handleMenuClick = (e: { key: string; }) => {
+    setCalendarNumber(parseInt(e.key)); // Parse e.key to integer if necessary
   };
   const calendarSelectItems: MenuProps["items"] = [
     {
