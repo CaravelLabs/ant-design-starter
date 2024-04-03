@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import {
+  DownOutlined,
   LaptopOutlined,
   NotificationOutlined,
   UserOutlined,
@@ -15,6 +16,11 @@ import {
   Avatar,
   Col,
   Row,
+  Dropdown,
+  Button,
+  Space,
+  Divider,
+  Tabs,
 } from "antd";
 import { Calendar } from "antd";
 import {
@@ -24,6 +30,8 @@ import {
   DoubleRightOutlined,
   DoubleLeftOutlined,
 } from "@ant-design/icons";
+import dayjs from "dayjs";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import CustomCalendar from "./custom-calendar";
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -35,6 +43,7 @@ const items1: MenuProps["items"] = ["1", "2", "3"].map((key) => ({
 
 const { Meta } = Card;
 
+// Code for Custom Grid Style
 const gridStyleFull: React.CSSProperties = {
   width: "100%",
   textAlign: "center",
@@ -85,21 +94,86 @@ const dataSource = [
     key: "1",
     title: "Card Title 1",
     content: "This is the content of the first card.",
-    date: "01-Apr",
+    date: "01-Apr (Mon)",
+    boardMeetings: {
+      title: "Board Meeting 1",
+      description: "This is the description",
+      date: "01-Apr (Mon)",
+      time: "10:00 AM",
+      info: "Info",
+      pid: "PID",
+      boardDoc: "Board Doc",
+    },
+    noObjectionDeadlines: {
+      title: "No Objection Deadline 1",
+      description: "This is the description",
+      date: "01-Apr (Mon)",
+      time: "10:00 AM",
+      info: "Info",
+      pid: "PID",
+      boardDoc: "Board Doc",
+    },
+    otherActivities: {
+      title: "Other Activity 1",
+      description: "This is the description",
+      date: "01-Apr (Mon)",
+      time: "10:00 AM",
+      info: "Info",
+    },
+  },
+];
+// ------------------------------
+
+// Code for Add Event Menu
+const addEventItems: MenuProps["items"] = [
+  {
+    key: "1",
+    label: "Board Meetings",
+  },
+  {
+    key: "2",
+    label: "No Objection Deadlines",
+  },
+  {
+    key: "3",
+    label: "Other Activities",
   },
 ];
 
+const handleMenuClick: MenuProps["onClick"] = (e) => {
+  console.log(e);
+};
+
+const menuProps: MenuProps = {
+  items: addEventItems,
+  onClick: handleMenuClick,
+};
+// ------------------------------
+
+// Code for Table Columns
 const columns = [
   {
     title: "Date",
     dataIndex: "date",
     key: "date",
-    render: (date: string) => <a>{date}</a>,
+    render: (date: string) => (
+      <Space direction="vertical" size="middle">
+        <a>{date}</a>
+        <Dropdown menu={menuProps}>
+          <Button>
+            <Space>
+              + Add Event
+              <DownOutlined />
+            </Space>
+          </Button>
+        </Dropdown>
+      </Space>
+    ),
   },
   {
     title: "Board Meetings",
-    dataIndex: "",
-    key: "card",
+    dataIndex: "boardMeetings",
+    key: "boardMeetingCard",
     render: (record: any) => (
       <Card
         style={{ width: 300 }}
@@ -111,19 +185,18 @@ const columns = [
       >
         <Card.Grid style={gridStyleFull}>
           <Meta title="Event Title" description="This is the description" />
+          <Meta title={record?.title} description={record.description} />
         </Card.Grid>
-        {/* <Card.Grid style={gridStyleHalf}>Date</Card.Grid>
-        <Card.Grid style={gridStyleHalf}>Time</Card.Grid> */}
-        <Card.Grid style={gridStyleThirds}>Info</Card.Grid>
-        <Card.Grid style={gridStyleThirds}>PID</Card.Grid>
-        <Card.Grid style={gridStyleThirds}>Board Doc</Card.Grid>
+        <Card.Grid style={gridStyleThirds}>{record.info}</Card.Grid>
+        <Card.Grid style={gridStyleThirds}>{record.pid}</Card.Grid>
+        <Card.Grid style={gridStyleThirds}>{record.boardDoc}</Card.Grid>
       </Card>
     ),
   },
   {
     title: "No-Objection Deadlines",
-    dataIndex: "",
-    key: "card",
+    dataIndex: "noObjectionDeadlines",
+    key: "noObjectionCard",
     render: (record: any) => (
       <Card
         style={{ width: 300 }}
@@ -135,19 +208,18 @@ const columns = [
       >
         <Card.Grid style={gridStyleFull}>
           <Meta title="Event Title" description="This is the description" />
+          <Meta title={record.title} description={record.description} />
         </Card.Grid>
-        {/* <Card.Grid style={gridStyleHalf}>Date</Card.Grid>
-        <Card.Grid style={gridStyleHalf}>Time</Card.Grid> */}
-        <Card.Grid style={gridStyleThirds}>Info</Card.Grid>
-        <Card.Grid style={gridStyleThirds}>PID</Card.Grid>
-        <Card.Grid style={gridStyleThirds}>Board Doc</Card.Grid>
+        <Card.Grid style={gridStyleThirds}>{record.info}</Card.Grid>
+        <Card.Grid style={gridStyleThirds}>{record.pid}</Card.Grid>
+        <Card.Grid style={gridStyleThirds}>{record.boardDoc}</Card.Grid>
       </Card>
     ),
   },
   {
     title: "Other Activities",
-    dataIndex: "",
-    key: "card",
+    dataIndex: "otherActivities",
+    key: "otherActivitiesCard",
     render: (record: any) => (
       <Card
         style={{ width: 300 }}
@@ -158,11 +230,64 @@ const columns = [
       >
         <Card.Grid style={gridStyleFull}>
           <Meta title="Event Title" description="This is the description" />
+          <Meta title={record.title} description={record.description} />
         </Card.Grid>
-        {/* <Card.Grid style={gridStyleHalf}>Date</Card.Grid>
-        <Card.Grid style={gridStyleHalf}>Time</Card.Grid> */}
-        <Card.Grid style={gridStyleFull}>Info</Card.Grid>
+        <Card.Grid style={gridStyleFull}>{record.info}</Card.Grid>
       </Card>
+    ),
+  },
+];
+// ------------------------------
+
+// Code for Tabs and Export Menu
+const exportMenuItems: MenuProps["items"] = [
+  {
+    key: "1",
+    label: "Export to PDF",
+  },
+  {
+    key: "2",
+    label: "Export to Excel",
+  },
+];
+
+const exportMenuProps: MenuProps = {
+  items: exportMenuItems,
+  onClick: (e) => {
+    console.log(e);
+  },
+};
+
+const operations = (
+  <>
+    <Dropdown menu={exportMenuProps}>
+      <Button>
+        Export <DownOutlined />
+      </Button>
+    </Dropdown>
+  </>
+);
+// ------------------------------
+
+const tabs = [
+  {
+    key: "1",
+    label: "Tentative Calendar",
+    children: (
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        showSorterTooltip={true}
+      />
+    ),
+  },
+  {
+    key: "2",
+    label: "Provisional Calendar",
+    children: (
+      <>
+        <p>Under Construction</p>
+      </>
     ),
   },
 ];
@@ -236,17 +361,13 @@ const App: React.FC = () => {
               {/* <Calendar fullscreen={false} /> */}
             </div>
           </Sider>
-          <Content style={{ padding: "0 20px", minHeight: 280 }}>
-            <Table
-              columns={columns}
-              dataSource={dataSource}
-              showSorterTooltip={true}
-            />
+          <Content style={{ padding: "0 24px" }}>
+            <Tabs tabBarExtraContent={operations} items={tabs} />
           </Content>
         </Layout>
       </Content>
       <Footer style={{ textAlign: "center" }}>
-        {/* Caravel Labs ©2024 Created by CL Engineering Team */}
+        Caravel Labs ©2024 Created by CL Engineering Team
       </Footer>
     </Layout>
   );
